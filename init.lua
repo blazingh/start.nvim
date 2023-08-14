@@ -465,8 +465,8 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  tsserver = {},
+  html = { filetypes = { 'html', 'twig', 'hbs'} },
 
   lua_ls = {
     Lua = {
@@ -533,15 +533,7 @@ cmp.setup {
     --     fallback()
     --   end
     -- end, { 'i', 's' }),
-    -- ['<S-Tab>'] = cmp.mapping(function(fallback)
-    --   if cmp.visible() then
-    --     cmp.select_prev_item()
-    --   elseif luasnip.locally_jumpable(-1) then
-    --     luasnip.jump(-1)
-    --   else
-    --     fallback()
-    --   end
-    -- end, { 'i', 's' }),
+    ['<S-Tab>'] = cmp.mapping.close(),
   },
   sources = {
     { name = 'nvim_lsp' },
