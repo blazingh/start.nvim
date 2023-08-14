@@ -114,6 +114,15 @@ require('lazy').setup({
     'Exafunction/codeium.vim',
   },
 
+  -- lazy git
+  {
+    'kdheepak/lazygit.nvim',
+   -- optional for floating window border decoration
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+  },
+
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
   {
@@ -276,7 +285,11 @@ vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { desc = 'Previous buffer' })
 vim.keymap.set('n', '<leader>bx', ':bd<CR>', { desc = 'Close buffer' })
 -- next buffer with leader bd right
 
- 
+
+-- lazy git
+vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { desc = 'LazyGit' })
+
+
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
