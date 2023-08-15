@@ -416,6 +416,13 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+-- widow size adjustment
+vim.keymap.set('n', '<A-left>', '<C-w><', { desc = 'Increase window size' })
+vim.keymap.set('n', '<A-right>', '<C-w>>', { desc = 'Decrease window size' })
+vim.keymap.set('n', '<A-up>', '<C-w>+', { desc = 'Increase window size' })
+vim.keymap.set('n', '<A-down>', '<C-w>-', { desc = 'Decrease window size' })
+
+
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
