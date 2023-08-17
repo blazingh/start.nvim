@@ -93,6 +93,30 @@ require('lazy').setup({
     },
   },
 
+  -- files tree
+  {
+    "nvim-tree/nvim-tree.lua",
+    version = "*",
+    lazy = false,
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+        require("nvim-tree").setup {
+          sort_by = "case_sensitive",
+          view = {
+            width = 30,
+          },
+          renderer = {
+            group_empty = true,
+          },
+          filters = {
+            dotfiles = true,
+          },
+      }
+    end,
+  },
+
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -343,6 +367,11 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
+
+-- file tree
+vim.keymap.set('n', '<leader>ft', ':NvimTreeToggle<CR>', { desc = '[F]ile [T]ree' })
+vim.keymap.set('n', '<leader>o', ':NvimTreeFocus<CR>', { desc = '[F]ile [R]efresh' })
+
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
