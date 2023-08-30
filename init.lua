@@ -78,6 +78,9 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
 
+  -- formater
+  'mhartington/formatter.nvim',
+
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
@@ -93,7 +96,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -109,17 +112,17 @@ require('lazy').setup({
       "nvim-tree/nvim-web-devicons",
     },
     config = function()
-        require("nvim-tree").setup {
-          sort_by = "case_sensitive",
-          view = {
-            width = 30,
-          },
-          renderer = {
-            group_empty = true,
-          },
-          filters = {
-            dotfiles = true,
-          },
+      require("nvim-tree").setup {
+        sort_by = "case_sensitive",
+        view = {
+          width = 30,
+        },
+        renderer = {
+          group_empty = true,
+        },
+        filters = {
+          dotfiles = true,
+        },
       }
     end,
   },
@@ -148,14 +151,14 @@ require('lazy').setup({
   -- lazy git
   {
     'kdheepak/lazygit.nvim',
-   -- optional for floating window border decoration
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
+    -- optional for floating window border decoration
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -169,7 +172,8 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
+          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
@@ -197,7 +201,7 @@ require('lazy').setup({
         section_separators = '',
       },
       sections = {
-        lualine_c = {'filename', 'codeium#GetStatusString'}
+        lualine_c = { 'filename', 'codeium#GetStatusString' }
       }
     },
   },
@@ -317,16 +321,20 @@ vim.keymap.set('i', '<C-right>', function() return vim.fn['codeium#CycleCompleti
 vim.keymap.set('i', '<C-left>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true })
 
 -- buffer navigation
-vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Next buffer' })
-vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = 'Previous buffer' })
 -- close buffer
 vim.keymap.set('n', '<leader>bx', ':bd<CR>', { desc = 'Close buffer' })
 -- next buffer with leader bd right
 
+-- telescope resume with leader s enter
+vim.keymap.set('n', '<leader>s<CR>', ':Telescope resume<CR>', { desc = 'Telescope resume' })
 
 -- lazy git
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { desc = 'LazyGit' })
 
+-- format on save
+vim.keymap.set('n', '<leader>ff', ':Format<CR>', { desc = '[F]ormat [F]ile' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -518,7 +526,7 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
   tsserver = {},
-  html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
 
   lua_ls = {
     Lua = {
