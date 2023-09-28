@@ -1,45 +1,5 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-
-Kickstart.nvim is *not* a distribution.
-
-Kickstart.nvim is a template for your own configuration.
-  The goal is that you can read every line of code, top-to-bottom, understand
-  what your configuration is doing, and modify it to suit your needs.
-
-  Once you've done that, you should start exploring, configuring and tinkering to
-  explore Neovim!
-
-  If you don't know anything about Lua, I recommend taking some time to read through
-  a guide. One possible example:
-  - https://learnxinyminutes.com/docs/lua/
-
-
-  And then you can explore or search through `:help lua-guide`
-  - https://neovim.io/doc/user/lua-guide.html
-
-
-Kickstart Guide:
-
-I have left several `:help X` comments throughout the init.lua
-You should run that command and read that help section for more information.
-
-In addition, I have some `NOTE:` items throughout the file.
-These are for you, the reader to help understand what is happening. Feel free to delete
-them once you know what you're doing, but they should serve as a guide for when you
-are first encountering a few different constructs in your nvim config.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now :)
---]]
 -- Set <space> as the leader key
 -- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -49,6 +9,11 @@ vim.o.softtabstop = 2
 vim.o.shiftwidth = 2
 vim.o.expandtab = true
 
+-- set padding to 7 lines
+vim.o.scrolloff = 7
+
+-- set relative number
+vim.o.relativenumber = true
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -101,30 +66,6 @@ require('lazy').setup({
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
-  },
-
-  -- files tree
-  {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
-    lazy = false,
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-      require("nvim-tree").setup {
-        sort_by = "case_sensitive",
-        view = {
-          width = 30,
-        },
-        renderer = {
-          group_empty = true,
-        },
-        filters = {
-          dotfiles = true,
-        },
-      }
-    end,
   },
 
   {
@@ -307,6 +248,32 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
+-- [[ Netrw configuration ]]
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3
+vim.g.netrw_browse_split = 4
+vim.g.netrw_keepdir = 0
+vim.g.netrw_winsize = 10
+vim.g.netrw_browse_split = 4
+
+-- [[ Netrw mapping ]]
+function NetrwMapping()
+  vim.api.nvim_set_keymap('n', '<leader>n', ':echo "This is a Netrw buffer"<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', '<Tab>', 'mf', { desc = 'mark file' })
+  vim.api.nvim_set_keymap('n', '<S-Tab>', 'mF', { desc = 'unmark file' })
+  vim.api.nvim_set_keymap('n', '<Leader><Tab>', 'mu', { desc = 'unmark all file' })
+
+  vim.api.nvim_set_keymap('n', '<leader>fa', '%:w<CR>:buffer #<CR>', { desc = 'create file' })
+  vim.api.nvim_set_keymap('n', '<leader>fA', 'd', { desc = 'create directory' })
+  vim.api.nvim_set_keymap('n', '<leader>fr', 'R', { desc = 'rename file' })
+  vim.api.nvim_set_keymap('n', '<leader>fd', 'D', { desc = 'delete file' })
+  vim.api.nvim_set_keymap('n', '<leader>fc', 'mc', { desc = 'copy marked files' })
+  vim.api.nvim_set_keymap('n', '<leader>fC', 'mtmc', { desc = 'copy marked files' })
+  vim.api.nvim_set_keymap('n', '<leader>fm', 'mm', { desc = 'move marked files' })
+  vim.api.nvim_set_keymap('n', '<leader>fM', 'mtmm', { desc = 'move marked files' })
+  vim.api.nvim_set_keymap('n', '<leader>f;', 'mx', { desc = 'run command on marked files' })
+end
+
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -317,15 +284,17 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- open file tree in a split window
+vim.keymap.set('n', '<leader>ft', ':Lexplore<CR>', { desc = '[F]ile [T]ree' })
+
+
 vim.keymap.set('i', '<C-right>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true })
 vim.keymap.set('i', '<C-left>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true })
 
 -- buffer navigation
 vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = 'Previous buffer' })
--- close buffer
 vim.keymap.set('n', '<leader>bx', ':bd<CR>', { desc = 'Close buffer' })
--- next buffer with leader bd right
 
 -- telescope resume with leader s enter
 vim.keymap.set('n', '<leader>s<CR>', ':Telescope resume<CR>', { desc = 'Telescope resume' })
@@ -333,7 +302,7 @@ vim.keymap.set('n', '<leader>s<CR>', ':Telescope resume<CR>', { desc = 'Telescop
 -- lazy git
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { desc = 'LazyGit' })
 
--- format on save
+-- format
 vim.keymap.set('n', '<leader>ff', ':Format<CR>', { desc = '[F]ormat [F]ile' })
 
 -- [[ Highlight on yank ]]
@@ -383,76 +352,6 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
 
--- file tree
-vim.keymap.set('n', '<leader>ft', ':NvimTreeToggle<CR>', { desc = '[F]ile [T]ree' })
-vim.keymap.set('n', '<leader>o', ':NvimTreeFocus<CR>', { desc = '[F]ile [R]efresh' })
-
-
--- [[ Configure Treesitter ]]
--- See `:help nvim-treesitter`
-require('nvim-treesitter.configs').setup {
-  -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
-
-  -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-  auto_install = false,
-
-  highlight = { enable = true },
-  indent = { enable = true },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = '<c-space>',
-      node_incremental = '<c-space>',
-      scope_incremental = '<c-s>',
-      node_decremental = '<M-space>',
-    },
-  },
-  textobjects = {
-    select = {
-      enable = true,
-      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-        ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
-      },
-    },
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        [']m'] = '@function.outer',
-        [']]'] = '@class.outer',
-      },
-      goto_next_end = {
-        [']M'] = '@function.outer',
-        [']['] = '@class.outer',
-      },
-      goto_previous_start = {
-        ['[m'] = '@function.outer',
-        ['[['] = '@class.outer',
-      },
-      goto_previous_end = {
-        ['[M'] = '@function.outer',
-        ['[]'] = '@class.outer',
-      },
-    },
-    swap = {
-      enable = true,
-      swap_next = {
-        ['<leader>a'] = '@parameter.inner',
-      },
-      swap_previous = {
-        ['<leader>A'] = '@parameter.inner',
-      },
-    },
-  },
-}
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
@@ -568,38 +467,18 @@ local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
-cmp.setup {
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-  mapping = cmp.mapping.preset.insert {
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete {},
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = false,
-    },
-    -- ['<Tab>'] = cmp.mapping(function(fallback)
-    --   if cmp.visible() then
-    --     cmp.select_next_item()
-    --   elseif luasnip.expand_or_locally_jumpable() then
-    --     luasnip.expand_or_jump()
-    --   else
-    --     fallback()
-    --   end
-    -- end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping.close(),
-  },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  },
-}
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+
+-- Function to check filetype
+_G.check_filetype = function()
+  -- [[ apply Netrw mapping when filetype is netrw ]]
+  if (vim.bo.filetype == 'netrw') then
+    NetrwMapping()
+  end
+end
+
+-- Define an autocmd to trigger the function whenever you change buffers
+vim.cmd([[autocmd BufEnter * lua check_filetype()]])
+
