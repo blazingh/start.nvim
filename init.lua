@@ -48,6 +48,10 @@ vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = 'Previous buffer' })
 vim.keymap.set('n', '<leader>bx', ':bd<CR>', { desc = 'Close buffer' })
 
+
+-- add format on save
+vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
+
 require('lazy').setup({
 
   -- codeium for ai autocomplete
@@ -92,7 +96,16 @@ require('lazy').setup({
   {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.4',
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make',
+        cond = function()
+          return vim.fn.executable 'make' == 1
+        end,
+      },
+    },
     config = function()
       local builtin = require('telescope.builtin')
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
@@ -168,6 +181,7 @@ require('lazy').setup({
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
       { 'jose-elias-alvarez/null-ls.nvim', config = true },
+      { 'j-hui/fidget.nvim',               tag = 'legacy', opts = {} },
     },
     config = function()
       local on_attach = function(_, bufnr)
@@ -227,7 +241,52 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>gp', require('gitsigns').preview_hunk,
           { buffer = bufnr, desc = '[G]it [P]review Hunk' })
         vim.keymap.set('n', '<leader>gb', require('gitsigns').blame_line, { buffer = bufnr, desc = '[G]it [B]lame' })
-      end,
+      end
+    },
+  },
+
+  -- lualine status bar
+  {
+    'nvim-lualine/lualine.nvim',
+    config = function()
+      for i = 1, 9 do
+        vim.keymap.set('n', '<leader>' .. i, ':LualineBuffersJump! ' .. i .. '<CR>', { desc = 'Jump to buffer ' .. i })
+      end
+    end,
+    opts = {
+      options = {
+        icons_enabled = true,
+        theme = 'auto',
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
+        disabled_filetypes = {
+          statusline = {},
+          winbar = {},
+        },
+        ignore_focus = {},
+        always_divide_middle = true,
+        globalstatus = false,
+        refresh = {
+          statusline = 1000,
+          tabline = 1000,
+          winbar = 1000,
+        }
+      },
+      sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diff', 'diagnostics' },
+        lualine_c = {
+          '%f',
+          { 'buffers', mode = 2 },
+        },
+        lualine_x = { 'encoding', 'fileformat', 'filetype' },
+        lualine_y = { 'progress' },
+        lualine_z = { 'location' }
+      },
+      tabline = {},
+      winbar = {},
+      inactive_winbar = {},
+      extensions = {}
     },
   },
 
