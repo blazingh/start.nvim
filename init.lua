@@ -303,11 +303,6 @@ require('lazy').setup({
     end,
   },
 
-  -- dressing for nicer looking input
-  {
-    'stevearc/dressing.nvim',
-    envent = 'VeryLazy',
-  }
 })
 
 
