@@ -8,6 +8,8 @@ vim.o.scrolloff = 12
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.clipboard = 'unnamedplus'
+vim.o.termguicolors = true
+
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -67,9 +69,11 @@ require('lazy').setup({
   -- nightfox theme
   {
     'EdenEast/nightfox.nvim',
-    config = function()
-      vim.cmd [[colorscheme carbonfox]]
-    end
+    opts = {
+      options = {
+        transparent = true,
+      },
+    },
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -305,6 +309,8 @@ require('lazy').setup({
 
 })
 
+-- set the theme
+vim.cmd [[colorscheme carbonfox]]
 
 
 --[=====[
