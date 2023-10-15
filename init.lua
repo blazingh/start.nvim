@@ -125,10 +125,14 @@ require('lazy').setup({
     dependencies = {
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
-      'hrsh7th/cmp-nvim-lsp',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'rafamadriz/friendly-snippets',
     },
     config = function()
       local cmp = require('cmp')
+      local luasnip = require('luasnip')
+      require('luasnip.loaders.from_vscode').lazy_load()
       cmp.setup {
         mapping = cmp.mapping.preset.insert {
           ['<C-n>'] = cmp.mapping.scroll_docs(-4),
@@ -141,6 +145,11 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'buffer' },
           { name = 'path' },
+        },
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
         }
       }
     end
@@ -275,7 +284,11 @@ require('lazy').setup({
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
           lualine_c = {
-            '%f',
+            {
+              'filename',
+              file_status = true,
+              path = 1
+            },
             { 'buffers', mode = 2 },
           },
           lualine_x = { 'encoding', 'fileformat', 'filetype' },
