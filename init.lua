@@ -9,6 +9,8 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.clipboard = 'unnamedplus'
 vim.o.termguicolors = true
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -181,6 +183,7 @@ require('lazy').setup({
           'tsserver',
           'lua_ls',
           'gopls',
+          'jsonls',
         },
         automatic_installation = true,
       }
@@ -198,18 +201,15 @@ require('lazy').setup({
     },
     config = function()
       local on_attach = function(_, bufnr)
-        vim.keymap.set('n', 'ld', vim.lsp.buf.definition, { buffer = bufnr, desc = '[l]sp [d]efinition' })
-        vim.keymap.set('n', 'lh', vim.lsp.buf.hover, { buffer = bufnr, desc = '[l]sp [h]over' })
-        vim.keymap.set('n', 'li', vim.lsp.buf.implementation, { buffer = bufnr, desc = '[l]sp [i]mplementation' })
-        vim.keymap.set('n', 'lt', vim.lsp.buf.type_definition, { buffer = bufnr, desc = '[l]sp [t]ype definition' })
-        vim.keymap.set('n', 'lr', vim.lsp.buf.references, { buffer = bufnr, desc = '[l]sp [r]eferences' })
-        vim.keymap.set('n', 'lf', vim.lsp.buf.format, { buffer = bufnr, desc = '[l]sp [f]ormat' })
+        vim.keymap.set('n', '<leader>ld', vim.lsp.buf.definition, { buffer = bufnr, desc = '[l]sp [d]efinition' })
+        vim.keymap.set('n', '<leader>lh', vim.lsp.buf.hover, { buffer = bufnr, desc = '[l]sp [h]over' })
+        vim.keymap.set('n', '<leader>li', vim.lsp.buf.implementation, { buffer = bufnr, desc = '[l]sp [i]mplementation' })
+        vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition,
+          { buffer = bufnr, desc = '[l]sp [t]ype definition' })
+        vim.keymap.set('n', '<leader>lr', vim.lsp.buf.references, { buffer = bufnr, desc = '[l]sp [r]eferences' })
+        vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { buffer = bufnr, desc = '[l]sp [f]ormat' })
       end
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      require('lspconfig').tsserver.setup {
-        on_attach = on_attach,
-        capabilities = capabilities
-      }
       require('lspconfig').lua_ls.setup {
         on_attach = on_attach,
         capabilities = capabilities,
@@ -221,7 +221,15 @@ require('lazy').setup({
           }
         }
       }
+      require('lspconfig').tsserver.setup {
+        on_attach = on_attach,
+        capabilities = capabilities
+      }
       require('lspconfig').gopls.setup {
+        on_attach = on_attach,
+        capabilities = capabilities
+      }
+      require('lspconfig').jsonls.setup {
         on_attach = on_attach,
         capabilities = capabilities
       }
@@ -288,11 +296,6 @@ require('lazy').setup({
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
           lualine_c = {
-            {
-              'filename',
-              file_status = true,
-              path = 1
-            },
             { 'buffers', mode = 2 },
           },
           lualine_x = { 'encoding', 'fileformat', 'filetype' },
@@ -306,6 +309,79 @@ require('lazy').setup({
       })
     end,
   },
+
+  -- nvim file tree
+  {
+    "nvim-tree/nvim-tree.lua",
+    version = "*",
+    lazy = false,
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+      "antosha417/nvim-lsp-file-operations",
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      local function my_on_attach(bufnr)
+        local api = require "nvim-tree.api"
+
+        local function opts(desc)
+          return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        end
+
+        -- default mappings
+        api.config.mappings.default_on_attach(bufnr)
+
+        -- custom mappings
+        vim.keymap.set('n', '<leader>fbm', api.marks.bulk.move, opts('Bulk Move Marks'))
+        vim.keymap.set('n', '<leader>fbd', api.marks.bulk.delete, opts('Bulk Delete Marks'))
+        vim.keymap.set('n', '<leader>fb', api.tree.toggle_help, opts('Help'))
+        vim.keymap.set('n', 'q', api.tree.close, opts('[q]uit'))
+      end
+
+      require("nvim-tree").setup {
+        on_attach = my_on_attach,
+        sort_by = "case_sensitive",
+        view = {
+          width = function()
+            return math.floor(vim.opt.columns:get() * 0.8)
+          end,
+          relativenumber = true,
+          float = {
+            enable = true,
+            open_win_config = function()
+              local screen_w = vim.opt.columns:get()
+              local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+              local window_w = screen_w * 0.8
+              local window_h = screen_h * 0.8
+              local window_w_int = math.floor(window_w)
+              local window_h_int = math.floor(window_h)
+              local center_x = (screen_w - window_w) / 2
+              local center_y = ((vim.opt.lines:get() - window_h) / 2)
+                  - vim.opt.cmdheight:get()
+              return {
+                border = "rounded",
+                relative = "editor",
+                row = center_y,
+                col = center_x,
+                width = window_w_int,
+                height = window_h_int,
+              }
+            end,
+          },
+        },
+        renderer = {
+          group_empty = true,
+        },
+        filters = {
+          dotfiles = true,
+        },
+      }
+      require("lsp-file-operations").setup()
+      vim.keymap.set('n', '<leader>ft', ':NvimTreeToggle<CR>', { desc = 'Toggle [F]ile [T]ree' })
+      vim.keymap.set('n', '<leader>fc', ':NvimTreeFindFile<CR>', { desc = '[f]ind [c]urrent file' })
+      vim.keymap.set('n', '<leader>fr', ':NvimTreeRefresh<CR>', { desc = '[f]ind [r]efresh' })
+    end,
+  }
 
 })
 
