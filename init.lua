@@ -12,6 +12,7 @@ vim.o.termguicolors = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+vim.opt.laststatus = 3
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -275,6 +276,7 @@ require('lazy').setup({
       end
       require('lualine').setup({
         options = {
+          globalstatus = true,
           icons_enabled = true,
           theme = 'auto',
           component_separators = { left = '', right = '' },
@@ -285,7 +287,6 @@ require('lazy').setup({
           },
           ignore_focus = {},
           always_divide_middle = true,
-          globalstatus = false,
           refresh = {
             statusline = 1000,
             tabline = 1000,
