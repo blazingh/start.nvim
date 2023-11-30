@@ -13,6 +13,8 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 vim.opt.laststatus = 3
+vim.cmd([[highlight winseparator guifg=#FFFFFF guibg=NONE]])
+
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -184,6 +186,7 @@ require('lazy').setup({
           'tsserver',
           'lua_ls',
           'gopls',
+          'html',
           'jsonls',
         },
         automatic_installation = true,
@@ -227,6 +230,12 @@ require('lazy').setup({
         capabilities = capabilities
       }
       require('lspconfig').gopls.setup {
+        on_attach = on_attach,
+        capabilities = capabilities
+      }
+      require('lspconfig').html.setup {
+        filetype = { 'html' },
+        root_dir = function() return vim.loop.cwd() end,
         on_attach = on_attach,
         capabilities = capabilities
       }
