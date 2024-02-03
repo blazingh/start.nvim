@@ -188,6 +188,7 @@ require('lazy').setup({
           'gopls',
           'html',
           'jsonls',
+          'pyright',
         },
         automatic_installation = true,
       }
@@ -240,6 +241,10 @@ require('lazy').setup({
         capabilities = capabilities
       }
       require('lspconfig').jsonls.setup {
+        on_attach = on_attach,
+        capabilities = capabilities
+      }
+      require('lspconfig').pyright.setup {
         on_attach = on_attach,
         capabilities = capabilities
       }
@@ -304,13 +309,13 @@ require('lazy').setup({
         },
         sections = {
           lualine_a = { 'mode' },
-          lualine_b = { 'branch', 'diff', 'diagnostics' },
+          lualine_b = { 'diff', 'diagnostics' },
           lualine_c = {
             { 'buffers', mode = 2 },
           },
-          lualine_x = { 'encoding', 'fileformat', 'filetype' },
+          lualine_x = {},
           lualine_y = { 'progress' },
-          lualine_z = { 'location' }
+          lualine_z = {}
         },
         tabline = {},
         winbar = {},
